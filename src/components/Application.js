@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import {
   getAppointmentsForDay,
@@ -13,13 +13,26 @@ import "components/Application.scss";
 import DayList from "components/DayList";
 import Appointment from "components/Appointment";
 
+const days = [
+  {
+    id: 1,
+    name: "Monday",
+    spots: 2
+  },
+  {
+    id: 2,
+    name: "Tuesday",
+    spots: 5
+  },
+  {
+    id: 3,
+    name: "Wednesday",
+    spots: 0
+  }
+];
+
 export default function Application(props) {
-  const {
-    state,
-    setDay,
-    bookInterview,
-    cancelInterview
-  } = useApplicationData();
+  const [day, setDay] = useState("Monday");
 
   const interviewers = getInterviewersForDay(state, state.day);
 
