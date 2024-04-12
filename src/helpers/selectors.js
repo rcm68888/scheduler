@@ -1,24 +1,23 @@
 export function getAppointmentsForDay(state, day) {
-  const found = state.days.find(d => day === d.name);
-
-  if (state.days.length === 0 || found === undefined) return [];
-
-  return found.appointments.map(id => state.appointments[id]);
-}
-
-export function getInterviewersForDay(state, day) {
-  const found = state.days.find(d => day === d.name);
-
-  if (state.days.length === 0 || found === undefined) return [];
-
-  return found.interviewers.map(id => state.interviewers[id]);
-}
-
-export function getInterview(state, interview) {
-  return (
-    interview && {
-      ...interview,
-      interviewer: state.interviewers[interview.interviewer]
+  const daysArray = [];
+  for (const aptDay of state.days) {
+    if (aptDay.name === day) {
+      daysArray.push(aptDay);
     }
-  );
+  }
+
+  if (daysArray === [] || !day || daysArray[0] === undefined) {
+    return [];
+  }
+
+  const aptArr = daysArray[0].appointments;
+
+  const dayApts = [];
+
+  for (const appointment of Object.values(state.appointments)) {
+    if (aptArr.includes(appointment.id)) {
+      dayApts.push(appointment);
+    }
+  }
+  return dayApts;
 }
