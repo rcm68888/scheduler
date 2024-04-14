@@ -1,67 +1,101 @@
-import { useReducer, useEffect } from "react";
-
+import { useState, useEffect } from "react";
 import axios from "axios";
+const socket = new WebSocket(process.env.REACT_APP_WEBSOCKET_URL);
 
-import reducer, {
-  SET_DAY,
-  SET_APPLICATION_DATA,
-  SET_INTERVIEW
-} from "reducers/application";
-
-import useRealTimeUpdate from "hooks/useRealtimeUpdate";
-
-export default function useApplicationData() {
-  const [state, dispatch] = useReducer(reducer, {
+export function useApplicationData() {
+  const [state, setState] = useState({
     day: "Monday",
     days: [],
     appointments: {},
     interviewers: {}
   });
 
-  const setDay = day => dispatch({ type: SET_DAY, day });
+  function updateAppointment(id, interview) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+    setState(prev => ({ ...prev, appointments }));
+  }
 
+  function bookInterview(id, interview) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+    return axios.put(`/api/appointments/${id}`, appointment).then(() => {
+      setState(prev => ({ ...prev, appointments }));
+    });
+  }
+
+  function deleteInterview(id) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: null
+    };
+
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
+    return axios.delete(`/api/appointments/${id}`, appointment).then(() => {
+      setState(prev => ({ ...prev, appointments }));
+    });
+  }
+
+  useEffect(() => {
+    socket.onopen = function() {
+      socket.send("ping");
+    };
+  }, []);
+
+  socket.onmessage = function(event) {
+    const msg = JSON.parse(event.data);
+    if (msg.type === "SET_INTERVIEW") {
+      updateAppointment(msg.id, msg.interview);
+    }
+  };
+  
+  socket.onclose = function() {
+    console.log("Connection closed");
+  };
+
+  // make api get request whenever appointments are updated
+  useEffect(() => {
+    axios
+      .get("/api/days")
+      .then(days => setState(prev => ({ ...prev, days: days.data })));
+  }, [state.appointments]);
+
+  const setDay = day => setState({ ...state, day });
+  
   useEffect(() => {
     Promise.all([
       axios.get("/api/days"),
       axios.get("/api/appointments"),
       axios.get("/api/interviewers")
-    ]).then(
-      ([{ data: days }, { data: appointments }, { data: interviewers }]) =>
-        dispatch({
-          type: SET_APPLICATION_DATA,
-          days,
-          appointments,
-          interviewers
-        })
-    );
-  }, []);
-
-  useRealTimeUpdate(dispatch);
-
-  function bookInterview(id, interview) {
-    return axios.put(`/api/appointments/${id}`, { interview }).then(() => {
-      dispatch({
-        type: SET_INTERVIEW,
-        id,
-        interview
+    ])
+      .then(response => {
+        setState(prev => ({
+          ...prev,
+          days: response[0].data,
+          appointments: response[1].data,
+          interviewers: response[2].data
+        }));
+      })
+      .catch(err => {
+        console.error(err);
       });
-    });
-  }
+  }, [state.appointments]);
 
-  function cancelInterview(id) {
-    return axios.delete(`/api/appointments/${id}`).then(() => {
-      dispatch({
-        type: SET_INTERVIEW,
-        id,
-        interview: null
-      });
-    });
-  }
-
-  return {
-    state,
-    setDay,
-    bookInterview,
-    cancelInterview
-  };
+  return { state, setDay, bookInterview, deleteInterview };
 }
