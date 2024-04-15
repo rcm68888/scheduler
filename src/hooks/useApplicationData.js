@@ -11,15 +11,27 @@ export function useApplicationData() {
   });
 
   function updateAppointment(id, interview) {
-    const appointment = {
-      ...state.appointments[id],
-      interview: { ...interview }
-    };
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment
-    };
-    setState(prev => ({ ...prev, appointments }));
+    if (!interview) {
+      const appointment = {
+        ...state.appointments[id],
+        interview: null
+      };
+      const appointments = {
+        ...state.appointments,
+        [id]: appointment
+      };
+      setState(prev => ({ ...prev, appointments }));
+    } else {
+      const appointment = {
+        ...state.appointments[id],
+        interview: { ...interview }
+      };
+      const appointments = {
+        ...state.appointments,
+        [id]: appointment
+      };
+      setState(prev => ({ ...prev, appointments }));
+    }
   }
 
   function bookInterview(id, interview) {
@@ -64,7 +76,7 @@ export function useApplicationData() {
       updateAppointment(msg.id, msg.interview);
     }
   };
-  
+
   socket.onclose = function() {
     console.log("Connection closed");
   };
@@ -95,7 +107,7 @@ export function useApplicationData() {
       .catch(err => {
         console.error(err);
       });
-  }, [state.appointments]);
+  }, []);
 
   return { state, setDay, bookInterview, deleteInterview };
 }
