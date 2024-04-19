@@ -4,8 +4,7 @@ import useApplicationData from "hooks/useApplicationData";
 import "components/Application.scss";
 import DayList from "components/DayList";
 import Appointment from "components/Appointment";
-import InterviewerList from "components/InterviewerList";
-import { useApplicationData } from "hooks/useApplicationData";
+//import InterviewerList from "components/InterviewerList";
 
 export default function Application(props) {
   const { state, setDay, bookInterview, deleteInterview} = useApplicationData();

@@ -116,3 +116,4 @@ export function useApplicationData() {
 
   return { state, setDay, bookInterview, deleteInterview };
 }
+export default useApplicationData;

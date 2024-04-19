@@ -1,4 +1,3 @@
-import React from "react";
 import React, { useEffect } from "react";
 import "components/Appointment/styles.scss";
 import useVisualMode from "hooks/useVisualMode";
@@ -30,16 +29,18 @@ export default function Appointment(props) {
       interviewer
     };
     transition(SAVING);
-    props.bookInterview(props.id, interview).then(() => {
-      transition(SHOW)).catch(err => transition(ERROR_SAVE))
-    });
+    props
+      .bookInterview(props.id, interview)
+      .then(() => transition(SHOW))
+      .catch(err => transition(ERROR_SAVE));
   }
 
   function deleteItem() {
     transition(DELETING, true);
-    props.deleteInterview(props.id).then(() => {
-      transition(EMPTY)).catch(err => transition(ERROR_DELETE, true))
-    });
+    props
+      .deleteInterview(props.id)
+      .then(() => transition(EMPTY))
+      .catch(err => transition(ERROR_DELETE, true));
   }
 
   useEffect(() => {

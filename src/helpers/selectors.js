@@ -33,12 +33,12 @@ const getInterviewersForDay = (state, day) => {
     return [];
   }
   const { interviewers } = filteredDays[0];
-  const interviewersList = [];
+  const interviewerList = [];
 
   for (const interviewer of interviewers) {
     interviewerList.push(state.interviewers[interviewer]);
   }
-  return interviewersList;
+  return interviewerList;
 };
 
 module.exports = {

@@ -16,7 +16,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "coverage": "npm test -- --coverage --watchAll=false",
-    "cypress": "cypress open -P ."
+    "cypress": "cypress open"
   },
   "browserslist": {
     "production": [
