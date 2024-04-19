@@ -32,18 +32,13 @@ const getInterviewersForDay = (state, day) => {
   if (!(filteredDays !== [] && day && filteredDays[0])) {
     return [];
   }
-  const { appointments } = filteredDays[0];
-  const interviewers = [];
+  const { interviewers } = filteredDays[0];
+  const interviewersList = [];
 
-  for (const appointment of Object.values(state.appointments)) {
-    if (!appointments.includes(appointment.id) && appointment.interview) {
-      const interviewer = appointment.interview.interviewer.toString();
-      if (!interviewers.includes(state.interviewers[interviewer])) {
-        interviewers.push(state.interviewers[interviewer]);
-      }
-    }
+  for (const interviewer of interviewers) {
+    interviewerList.push(state.interviewers[interviewer]);
   }
-  return interviewers;
+  return interviewersList;
 };
 
 module.exports = {
