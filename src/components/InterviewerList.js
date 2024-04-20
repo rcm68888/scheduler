@@ -17,6 +17,12 @@ function InterviewerList(props) {
     );
   });
 
+  // to validate component types
+  InterviewerList.propTypes = {
+    value: PropTypes.number,
+    onChange: PropTypes.func.isRequired
+  };
+
   return (
     <section className="interviewers">
       <h4 className="interviewers__header text--light">Interviewer</h4>
@@ -24,11 +30,5 @@ function InterviewerList(props) {
     </section>
   );
 }
-
-InterviewerList.propTypes = {
-  value: PropTypes.number,
-  onChange: PropTypes.func.isRequired,
-  //interviewers: PropTypes.array.isRequired
-};
 
 export default InterviewerList;
